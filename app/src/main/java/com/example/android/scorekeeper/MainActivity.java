@@ -3,6 +3,7 @@ package com.example.android.scorekeeper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -10,6 +11,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
     }
 
     public int scoreA = 0;
@@ -20,24 +23,27 @@ public class MainActivity extends AppCompatActivity {
     public int ballB = 0;
     public int outA = 0;
     public int outB = 0;
-    public boolean isApitching = true;
+    public int inning = 1;
+    public boolean isAbatting = true;
+    public boolean gameEnd = false;
+
 
     // team A functions start
-    private void addScoreTeamA(View v){
-        if(isApitching)
+    public void addScoreTeamA(View v) {
+        if (!isAbatting || gameEnd)
             return;
 
         scoreA++;
         display();
     }
 
-    private void addStrikeTeamA(View v){
-        if(isApitching)
+    public void addStrikeTeamA(View v) {
+        if (!isAbatting || gameEnd)
             return;
 
-        if(strikeA<3)
+        if (strikeA < 3)
             strikeA++;
-        if(strikeA==3){
+        if (strikeA == 3) {
             strikeA = 0;
             addOutTeamA(v);
         }
@@ -45,47 +51,48 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addBallTeamA(View v){
-        if(isApitching)
+    public void addBallTeamA(View v) {
+        if (!isAbatting || gameEnd)
             return;
 
-        if(ballA<4)
+        if (ballA < 4)
             ballA++;
         display();
     }
 
-    private void addOutTeamA(View v){
-        if(isApitching)
+    public void addOutTeamA(View v) {
+        if (!isAbatting || gameEnd)
             return;
+        strikeA = 0;
+        ballA = 0;
 
-        if(outA<3)
+        if (outA < 3)
             outA++;
-        if(outA==3) {
-            strikeA = 0;
-            ballA = 0;
-            outA = 0;
-            isApitching = !isApitching;
-        }
+        if (outA == 3) {
+             outA = 0;
+            isAbatting = !isAbatting;
+                    }
+        display();
     }
     // team A functions end
 
 
     // team B functions start
-    private void addScoreTeamB(View v){
-        if(!isApitching)
+    public void addScoreTeamB(View v) {
+        if (isAbatting || gameEnd)
             return;
 
         scoreB++;
         display();
     }
 
-    private void addStrikeTeamB(View v){
-        if(!isApitching)
+    public void addStrikeTeamB(View v) {
+        if (isAbatting || gameEnd)
             return;
 
-        if(strikeB<3)
+        if (strikeB < 3)
             strikeB++;
-        if(strikeB==3){
+        if (strikeB == 3) {
             strikeB = 0;
             addOutTeamB(v);
         }
@@ -93,35 +100,90 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addBallTeamB(View v){
-        if(!isApitching)
+    public void addBallTeamB(View v) {
+        if (isAbatting || gameEnd)
             return;
 
-        if(ballB<4)
+        if (ballB < 4)
             ballB++;
         display();
     }
 
-    private void addOutTeamB(View v){
-        if(!isApitching)
+    public void addOutTeamB(View v) {
+        if (isAbatting || gameEnd)
             return;
+        strikeB = 0;
+        ballB = 0;
 
-        if(outB<3)
+        if (outB < 3)
             outB++;
-        if(outB==3) {
-            strikeB = 0;
-            ballB = 0;
+
+        if (outB == 3) {
             outB = 0;
-            isApitching = !isApitching;
+            isAbatting = !isAbatting;
+            if(inning == 9)
+                gameEnd = true;
+            else
+                inning++;
         }
+        display();
     }
     // team B functions end
 
 
-    private void display(){
+    public void resetGame(View v){
 
+        scoreA = 0;
+         scoreB = 0;
+         strikeA = 0;
+         strikeB = 0;
+         ballA = 0;
+        ballB = 0;
+        outA = 0;
+        outB = 0;
+        inning = 1;
+        isAbatting = true;
+       gameEnd = false;
+       display();
     }
 
+    private void display() {
+        TextView aScore = (TextView) findViewById(R.id.teamAscore);
+        TextView aStrike = (TextView) findViewById(R.id.teamAstrike);
+        TextView aBall = (TextView) findViewById(R.id.teamAball);
+        TextView aOut = (TextView) findViewById(R.id.teamAout);
+        TextView bScore = (TextView) findViewById(R.id.teamBscore);
+        TextView bStrike = (TextView) findViewById(R.id.teamBstrike);
+        TextView bBall = (TextView) findViewById(R.id.teamBball);
+        TextView bOut = (TextView) findViewById(R.id.teamBout);
+        TextView inning_view = (TextView) findViewById(R.id.inning);
+        TextView isAbatting_view = (TextView) findViewById(R.id.isAbatting);
+
+        if(gameEnd) {
+            strikeA = strikeB = ballA = ballB = outA = outB = 0;
+            ((TextView) findViewById(R.id.gameEnd)).setText("Game End");
+        }
+
+        aScore.setText("" + scoreA);
+        aStrike.setText("" + strikeA);
+        aBall.setText("" + ballA);
+        aOut.setText("" + outA);
+
+        bScore.setText("" + scoreB);
+        bStrike.setText("" + strikeB);
+        bBall.setText("" + ballB);
+        bOut.setText("" + outB);
+
+        inning_view.setText("" + inning);
+        if(isAbatting)
+            isAbatting_view.setText("▶");
+        else
+            isAbatting_view.setText("◀");
+
+
+
+
+    }
 
 
 }

@@ -2,4 +2,5 @@
     <string name="app_name">Score Keeper</string>
     <string name="teamA">Doosan Bears</string>
     <string name="teamB">Lotte Giants</string>
+    <string name="buttonWidth">100dp</string>
 </resources>
